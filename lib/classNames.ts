@@ -130,6 +130,13 @@ export const imageFull = cn("w-full h-auto object-cover");
 export const imageRelative = cn("relative w-full h-full");
 
 // ============================================================================
+// BUTTONS
+// ============================================================================
+
+export const buttonBase = cn(" text-black border border-black/25 px-6 py-2 rounded-full");
+
+
+// ============================================================================
 // CARDS & PROJECTS
 // ============================================================================
 

@@ -9,6 +9,12 @@ const neueHaasUnicaPro = localFont({
   display: "swap",
 });
 
+const artCompany = localFont({
+  src: "../public/fonts/ArtCompanyMonoTest-Regular.woff",
+  variable: "--font-art-company",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Cynthia Cui",
   description: "Design Director @ Asian-Indigenous Relations Collective",
@@ -20,12 +26,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
         className={cn(
           antialiased,
           neueHaasUnicaPro.variable,
-          neueHaasUnicaPro.className
+          neueHaasUnicaPro.className,
+          artCompany.variable,
+          "h-full"
         )}
       >
         {children}

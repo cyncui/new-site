@@ -3,7 +3,7 @@
 import { ProjectCard } from "@/components/ProjectCard";
 import { projects, Project } from "@/lib/projects";
 import { useState, useRef, useEffect } from "react";
-import { cn, projectGrid, sectionSpacing, marginTop, marginBottom } from "@/lib/classNames";
+import { cn, projectGrid, sectionSpacingNone, marginBottom } from "@/lib/classNames";
 import { isTouchDevice } from "@/lib/utils";
 
 interface WorkPreviewSectionProps {
@@ -98,14 +98,13 @@ export function WorkPreviewSection({ onOpenModal }: WorkPreviewSectionProps) {
   }, [shouldScrollHorizontally, isHovered, isTouchDeviceState]);
 
   return (
-    <section className={sectionSpacing}>
+    <section className={sectionSpacingNone}>
       <div>
         <div className="relative">
           <div 
             ref={scrollContainerRef}
             className={cn(
               projectGrid, 
-              marginTop, 
               marginBottom,
               shouldScrollHorizontally && "flex-nowrap",
               shouldScrollHorizontally && "overflow-x-auto scrollbar-hide"

@@ -30,8 +30,8 @@ export const projects: Project[] = [
       tools: ["Figma", "Miro", "UserTesting"],
     },
     projectImages: [
-      "https://d2w9rnfcy7mm78.cloudfront.net/41358699/original_0cb49048673c932cad78e44682e24170.png?1764032946?bc=0",
-      "https://d2w9rnfcy7mm78.cloudfront.net/41358699/original_0cb49048673c932cad78e44682e24170.png?1764032946?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/29898621/original_c5f5851c49907064761d87710ea17be9.jpg?1723178870?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/29898621/original_c5f5851c49907064761d87710ea17be9.jpg?1723178870?bc=0",
     ],
   },
   {

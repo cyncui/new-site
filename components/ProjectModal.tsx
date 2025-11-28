@@ -1,8 +1,9 @@
 "use client";
 
 import { Project } from "@/lib/projects";
-import { useEffect, useLayoutEffect, useState, useRef, UIEventHandler } from "react";
+import { useEffect, useLayoutEffect, useState, useRef, UIEventHandler, useCallback } from "react";
 import Image from "next/image";
+import useEmblaCarousel from "embla-carousel-react";
 import { cn, modalOverlay, modalContent, modalCloseButton, modalCloseIcon, modalTitle, modalMeta, modalBody, modalSectionTitle, modalSectionText, imageRelative, widthHalf, pointerEventsNone, modalCloseButtonMobile } from "@/lib/classNames";
 import { isMobile, createEscapeKeyHandler, setBodyOverflow, clearTimeoutRef, cancelAnimationFrameRef, deferStateUpdate } from "@/lib/utils";
 
@@ -225,7 +226,7 @@ export function ProjectModal({ project, isOpen, onClose }: ProjectModalProps) {
         
         {/* Year */}
         <p className={modalMeta}>
-          {displayProject.year}      
+          {displayProject.year} — {displayProject.details?.role}
         </p>
 
         {/* Body Content */}
@@ -237,24 +238,132 @@ export function ProjectModal({ project, isOpen, onClose }: ProjectModalProps) {
             </div>
           )}
 
-          {displayProject.details?.role && (
+          {displayProject.projectImages && displayProject.projectImages.length > 0 && (
             <div>
-              <h3 className={modalSectionTitle}>Role</h3>
-              <p className={modalSectionText}>{displayProject.details.role}</p>
-            </div>
-          )}
-
-          {displayProject.details?.tools && displayProject.details.tools.length > 0 && (
-            <div>
-              <h3 className={modalSectionTitle}>Tools</h3>
-              <p className={modalSectionText}>
-                {displayProject.details.tools.join(", ")}
-              </p>
-            </div>
-          )}
+              <h3 className={modalSectionTitle}>Images</h3>
+              <ProjectImageCarousel images={displayProject.projectImages} title={displayProject.title} />
+            </div>)}
         </div>
       </div>
     </>
+  );
+}
+
+interface ProjectImageCarouselProps {
+  images: string[];
+  title: string;
+}
+
+function ProjectImageCarousel({ images, title }: ProjectImageCarouselProps) {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true,
+    align: 'center',
+    slidesToScroll: 1,
+  });
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    // Initialize selected index after mount
+    requestAnimationFrame(() => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    });
+    
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+    
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
+  }, [emblaApi, onSelect, images.length]);
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  return (
+    <div className="relative w-full mt-4">
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex" style={{ gap: '1rem' }}>
+          {images.map((image, index) => {
+            const isSelected = index === selectedIndex;
+            const distance = Math.abs(index - selectedIndex);
+            const opacity = isSelected ? 1 : distance === 1 ? 0.3 : 0.1;
+            
+            return (
+              <div 
+                key={index} 
+                className="flex-[0_0_100%] min-w-0 h-10/12 relative transition-opacity duration-300"
+                style={{ opacity }}
+              >
+                <div className="relative w-full aspect-7/5">
+                  <Image
+                    src={image}
+                    alt={`${title} - Image ${index + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 85vw, 35vw"
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      {images.length > 1 && (
+        <>
+          <button
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/40 rounded-full p-2 transition-colors z-10"
+            onClick={scrollPrev}
+            aria-label="Previous image"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="white"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+          <button
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/40 rounded-full p-2 transition-colors z-10"
+            onClick={scrollNext}
+            aria-label="Next image"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="white"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </>
+      )}
+    </div>
   );
 }
 
